@@ -11,8 +11,12 @@ Real-time face recognition system（基于实时视频流的人脸识别系统�
 + [中文参考链接](https://infoq.cn/article/video-stream-analytics-opencv)
 
 
-#### 2、去重-人脸识别模块
-                
+#### 2、去重模块
+
+由于，检测对象可能长时间处在视频监控范围之内，因此，该时间段的视频帧充斥着大量重复检测对象。对所有重复对象都去做后续的1：N人脸识别显然不合理，因此需要合理的去重设计。
+
+
+#### 3、人脸识别模块
 + 系统架构
 + windows环境配置
     + 列表二-1
@@ -22,7 +26,8 @@ Real-time face recognition system（基于实时视频流的人脸识别系统�
     * 列表一
     * 列表二
     * 列表三
-
+    
+    
 # 环境配置
 + linux
     + [Zookeeper配置](https://github.com)
