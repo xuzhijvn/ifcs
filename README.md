@@ -6,8 +6,7 @@ Real-time face recognition system（基于实时视频流的人脸识别系统�
                 
 + 系统架构
 
-[![](https://pandao.github.io/editor.md/examples/images/7.jpg)]
-(https://pandao.github.io/editor.md/examples/images/7.jpg "李健首张专辑《似水流年》封面")
+[![](https://res.infoq.com/articles/video-stream-analytics-opencv/en/resources/figure1.png)](https://res.infoq.com/articles/video-stream-analytics-opencv/en/resources/figure1.png "实时视频流架构设计")
 + [英文参考链接](https://www.infoq.com/articles/video-stream-analytics-opencv)
 + [中文参考链接](https://infoq.cn/article/video-stream-analytics-opencv)
 
