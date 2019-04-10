@@ -1,5 +1,5 @@
-# rt-fr
-Real-time face recognition system（基于实时视频流的人脸识别系统）
+# ims
+ Intelligent Monitoring System（智能监控系统）
 
 # 原理
 #### 1、实时视频流处理模块
