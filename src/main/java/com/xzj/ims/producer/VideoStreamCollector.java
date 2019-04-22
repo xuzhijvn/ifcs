@@ -10,6 +10,7 @@ import org.opencv.core.Mat;
 import com.icbc.bas.ai.face.FileUtils;
 import com.xzj.ims.comsumer.DefalutConsumer;
 import com.xzj.ims.core.ImsThreadPool;
+import com.xzj.ims.core.ProducerThreadPool;
 import com.xzj.ims.core.FutureExtractor;
 import com.xzj.ims.core.Topic;
 import com.xzj.ims.util.PropertyFileReader;
@@ -49,7 +50,7 @@ public class VideoStreamCollector {
 		final BlockingQueue<CameraConnect> connects = new LinkedBlockingQueue<CameraConnect>(urls.length);
 		ImsThreadPool.getInstance().execute(new FutureExtractor<CameraConnect>(futures, connects));
 		//sleep 2s, wait connects have value, one thread responsible for polling to read all connects
-		ImsThreadPool.getInstance().execute(new VideoEventGenerator(connects, topic), 1000);
+		ProducerThreadPool.getInstance().execute(new VideoEventGenerator(connects, topic),1000);
 		//sleep 3s, wait partition have value
 		Thread.sleep(2000);
 		//one thread consumes one partition

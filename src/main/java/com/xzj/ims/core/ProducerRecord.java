@@ -1,6 +1,6 @@
 /**
  * Licensed to the Apache Software Foundation (ASF) under one or more contributor license agreements. See the NOTICE
- * file distributed with this work for additional information regarding copyright ownership. The ASF licenses this file
+ * file distributed with this work for additional inforVion regarding copyright ownership. The ASF licenses this file
  * to You under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the
  * License. You may obtain a copy of the License at
  * 
@@ -12,6 +12,7 @@
  */
 package com.xzj.ims.core;
 
+import org.opencv.core.Mat;
 
 /**
  * 
@@ -33,7 +34,10 @@ public class ProducerRecord<K, V> extends Record<K, V>{
 	 * 
 	 */
 	private static final long serialVersionUID = 2332484525409792065L;
-
-
    
+	@Override
+	protected void finalize() throws Throwable {
+		((Mat)value()).release();
+		super.finalize();
+	}
 }

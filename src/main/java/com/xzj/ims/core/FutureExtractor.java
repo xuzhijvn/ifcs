@@ -33,7 +33,7 @@ public class FutureExtractor<T> implements Runnable{
 	
 	@Override
 	public void run() {
-		logger.info("Extract Object from Future...");
+		logger.info("Extracting Object from future...");
 		try {
 			extract();
 		} catch (Exception e) {
@@ -53,13 +53,13 @@ public class FutureExtractor<T> implements Runnable{
 					futures.put(future);
 				}
 			}
-			logger.info("Extract Object from Futures is done!");
+			logger.info("Success, extract Object from Futures is done!");
 		}else {
 			//future
 			while(future != null) {
 				if(future.isDone()) {
 					queues.put(future.get());
-					logger.info("Extract Object from Future is done!");
+					logger.info("Success, extract Object from Future is done!");
 					break;
 				}
 			}

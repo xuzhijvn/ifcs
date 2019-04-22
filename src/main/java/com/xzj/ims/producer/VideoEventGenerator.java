@@ -7,14 +7,16 @@ import java.util.concurrent.Future;
 
 import org.apache.log4j.Logger;
 import org.opencv.core.Mat;
+import org.opencv.videoio.Videoio;
 
 import com.xzj.ims.core.ImsThreadPool;
 import com.xzj.ims.core.FutureExtractor;
 import com.xzj.ims.core.ProducerRecord;
+import com.xzj.ims.core.ProducerThreadPool;
 import com.xzj.ims.core.Topic;
 
 /**
- * Class to convert Video Frame into byte array and generate JSON event using.
+ * Class to convert Video Frame into byte array and generate record object event using.
  * @author xuzhijun.online 
  * @date 2019年4月12日
  *
@@ -35,9 +37,15 @@ public class VideoEventGenerator implements Runnable {
 		try {
 			generateEvent();
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			logger.error(e.getMessage());
+		}finally {
+			try {
+				ProducerThreadPool.getInstance().shutdown();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				logger.error(e.getMessage());
+			}
 		}
 	}
 
@@ -47,52 +55,61 @@ public class VideoEventGenerator implements Runnable {
 	 */
 	private void generateEvent() throws Exception {
 
-		while (true) {
-			//从连接队列阻塞的取连接
-			CameraConnect connect = connects.take();
-			String cameraId = connect.getCameraId();
-
-			Mat mat = new Mat();
-			boolean flag = connect.getCamera().read(mat);
-			String url = connect.getUrl();
-			long ts = System.currentTimeMillis();
-			String timestamp = new Timestamp(ts).toString();
-			if(flag == false) {
-				logger.error("Failed read frame from cameraId " + cameraId + " with url " + url);
-				System.exit(0);
-				connect.release();
-				//reconnect
-				Future<CameraConnect> future = ImsThreadPool.getInstance().submit(new CameraConnect(cameraId, url));
-				//把连接取出来
-				ImsThreadPool.getInstance().execute(new FutureExtractor<CameraConnect>(future, connects));
-				logger.info("Reconnect camera..., cameraId "+ cameraId + " with url " + url);
+		while (connects.isEmpty() == false) {
+			//1, 从连接队列非阻塞的取连接
+			CameraConnect connect = connects.poll();
+			if(connect == null) {
+				connects.offer(connect);
 				continue;
 			}
-			
-			if(connect.getPolledTimes() != 25) {
+			//2, 如果读帧失败，网络流发起重连，离线视频流退出系统
+			String cameraId = connect.getCameraId();
+			Mat frame = new Mat();
+			boolean flag = connect.getCamera().read(frame);
+			String url = connect.getUrl();
+			if(flag == false ) {
+				double frameCount = connect.getCamera().get(Videoio.CAP_PROP_FRAME_COUNT);
+				if(frameCount > 0) {
+					logger.info("视频总帧数： "+frameCount);
+					logger.info("Finished, read frame from cameraId " + cameraId + " with url " + url);
+					continue;
+				}
+				logger.error("Failed, read frame from cameraId " + cameraId + " with url " + url);
+				//reconnect
+				logger.info("Reconnect camera..., cameraId "+ cameraId + " with url " + url);
+				connect.release();
+				Future<CameraConnect> future = ImsThreadPool.getInstance().submit(new CameraConnect(cameraId, url));
+				//异步把连接取出来
+				ImsThreadPool.getInstance().execute(new FutureExtractor<CameraConnect>(future, connects));
+				continue;
+			}
+			//3, 每一秒取一帧
+			int fps = (int) Math.floor(connect.getCamera().get(Videoio.CV_CAP_PROP_FPS));
+			if(connect.getPolledTimes() != fps) {
 				connect.setPolledTimes(connect.getPolledTimes() + 1);
 				connects.offer(connect);
 				continue;
 			}
 			connect.setPolledTimes(0);
-			
-//			if(!topic.get(cameraId).isEmpty()) {
-//				continue;
-//			}
-			
+			//4, 构造帧记录插入到消费者队列
+			long ts = System.currentTimeMillis();
+			String timestamp = new Timestamp(ts).toString();
+			ProducerRecord<String, Mat> record = new ProducerRecord<String, Mat>(topic, topic.get(cameraId), ts ,cameraId, frame);
 			// resize image before sending
 //			Imgproc.resize(mat, mat, new Size(640, 480), 0, 0, Imgproc.INTER_CUBIC);
-			logger.info("Processing cameraId " + cameraId + " with url " + url);
-			topic.get(cameraId).put(new ProducerRecord<String, Mat>(topic, topic.get(cameraId),ts ,cameraId, mat.clone()));
-			mat.release();
+			//离线视频流阻塞式的放入数据到队列，网络视频流非阻塞式放入
+			if(connect.getCamera().get(Videoio.CAP_PROP_FRAME_COUNT) > 0) {
+				topic.get(cameraId).put(record);
+				logger.info("Generated events for cameraId = " + cameraId + " timestamp = " + timestamp);
+			}else {
+				boolean stage = topic.get(cameraId).offer(record);
+				//插入失败说明消费者队列现在无法消费，可能是消费者消费能力不够
+				if(stage == true) {
+					logger.info("Generated events for cameraId = " + cameraId + " timestamp = " + timestamp);
+				}
+			}
 			connects.offer(connect);
-			logger.info("Generated events for cameraId = " + cameraId + " timestamp = " + timestamp);
 		}
 	}
-	
-//	boolean isShouldExit(BlockingQueue<CameraConnect> connects) {
-//		
-//	}
-
 
 }

@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfRect;
 import org.opencv.core.Rect;
+import org.opencv.core.Size;
 import org.opencv.objdetect.CascadeClassifier;
 
 import com.icbc.bas.ai.common.Constant;
@@ -45,7 +46,7 @@ public class FaceDetector {
 //		Mat gray=new Mat(frame.rows(),frame.cols(),frame.type());
 //		Imgproc.cvtColor(frame, gray, Imgproc.COLOR_RGB2GRAY);
 		MatOfRect faceDetections = new MatOfRect();
-		CASCADE_CLASSIFIER.detectMultiScale(frame, faceDetections, 1.05, 6);
+		CASCADE_CLASSIFIER.detectMultiScale(frame, faceDetections, 1.05, 6, 0, new Size(64,64));
 		for (Rect rect : faceDetections.toArray()) {
 //			Imgproc.rectangle(frame, new Point(rect.x, rect.y), new Point(rect.x + rect.width, rect.y + rect.height),
 //					new Scalar(0, 0, 255));

@@ -5,7 +5,6 @@ import java.util.concurrent.Callable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.opencv.videoio.VideoCapture;
-import org.opencv.videoio.Videoio;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -34,7 +33,6 @@ public class CameraConnect implements Callable<CameraConnect> {
 	
 	@Override
 	public CameraConnect call() throws Exception {
-		
 		logger.info("Connecting cameraId " + cameraId + " with url " + url);
 		try {
 			return connectCamera(cameraId, url);
@@ -61,7 +59,6 @@ public class CameraConnect implements Callable<CameraConnect> {
 				throw new Exception("Error opening cameraId " + cameraId + " with url=" + url + ".Set correct file path or url in camera.url key of property file.");
 			}
 		}
-		System.out.println("视频总帧数："+camera.get(Videoio.CAP_PROP_FRAME_COUNT));
 		this.setCamera(camera);
 		return this;
 	}

@@ -42,7 +42,7 @@ public class DefalutConsumer extends AbstractConsumer<Face<String, Mat>, String,
 	}
 
 	@Override
-	public void beforeConsume() {
+	public void beforeConsume() throws Exception {
 		faceDir = ROOT_DIR+Thread.currentThread().getName() + "\\face\\";
 		grayDir = ROOT_DIR+Thread.currentThread().getName() + "\\gray\\";
 		frameDir = ROOT_DIR+Thread.currentThread().getName() + "\\frame\\";
@@ -50,25 +50,27 @@ public class DefalutConsumer extends AbstractConsumer<Face<String, Mat>, String,
 			FileUtils.forceMkdir(new File(faceDir));
 			FileUtils.forceMkdir(new File(grayDir));
 			FileUtils.forceMkdir(new File(frameDir));
-			logger.info("Created file dir for face, gray, feame image is success.");
+			logger.info("Success, created file dir for face, gray, feame image is success.");
 		} catch (IOException e) {
-			logger.error("Create file dir for face, gray, feame image is fail.", e);
+			logger.error("Fail, create file dir for face, gray, feame image is fail.", e);
 			e.printStackTrace();
+			throw new IOException(e);
 		}
 	}
 
 	@Override
 	public void consume() throws Exception {
+		//阻塞的从消费队列里面获取数据
 		Record<String, Mat> record = partition.take();
 		logger.info("Consumeing cameraId " + record.key());
 		Mat frame = record.value();
+		//检测不到人脸，直接返回
 		List<Mat> faces = FaceDetector.getInstance().detect(frame);
 		if(faces.size() == 0) {
 			return;
 		}
-		
-//		Imgcodecs.imwrite("C:\\Users\\GoneBoy\\Desktop\\test\\"+record.timestamp()+"-T-"+System.currentTimeMillis()+".jpg", frame);
-		
+		logger.info(faces.size()+" faces is be found");
+		//构造人脸对象
 		List<Face<String, Mat>> facesObj = new ArrayList<Face<String, Mat>>();
 		for (Mat face : faces) {
 			String gray = FaceDetector.getInstance().align(face);
@@ -77,21 +79,18 @@ public class DefalutConsumer extends AbstractConsumer<Face<String, Mat>, String,
 				facesObj.add(faceObj);
 			}
 		}
-		
+		//将当前帧人脸数据加入缓存，并触发一个消费函数
 		cache.add(facesObj, t -> {
 			String facePath = faceDir + record.key() + "-T-" + record.timestamp() + "-face.png";
 			String grayPath = grayDir + record.key() + "-T-" + record.timestamp() + "-gray.png";
 			String framePath = frameDir + record.key() + "-T-" + record.timestamp() + "-frame.png";
 			
 			Imgcodecs.imwrite(facePath, t.getFace());
-			logger.warn("Saving face to " + facePath);
-			
+			logger.warn("Success, saved face to: " + facePath);
 			Imgcodecs.imwrite(grayPath, Imgcodecs.imread(t.getGray()));
-			logger.warn("Saving gray to " + grayPath);
-			
+			logger.warn("Success,saved gray to: " + grayPath);
 			Imgcodecs.imwrite(framePath, t.getFrame());
-			logger.warn("Saving frame to " + framePath);
+			logger.warn("Success, saved frame to: " + framePath);
 			});
-		
 	}
 }
