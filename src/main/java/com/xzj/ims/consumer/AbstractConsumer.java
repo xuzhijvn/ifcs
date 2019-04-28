@@ -48,12 +48,10 @@ abstract public class AbstractConsumer<T extends Face<K, V>, K, V> implements Co
 					System.gc();
 				}
 			}
-			System.out.println("消费者线程数："+ConsumerThreadPool.getInstance().getActiveCount());
-//			Thread.sleep(3000);
-			System.out.println("完成任务数："+ConsumerThreadPool.getInstance().getCompletedTaskCount());
+			//最后一个消费者线程执行关闭线程池操作
 			if(ConsumerThreadPool.getInstance().getActiveCount() == ConsumerThreadPool.getInstance().getCompletedTaskCount()) {
-				logger.info(Thread.currentThread().getName()+" is the last active thread, consumer thread pool will be shutdown!!!");
-				ConsumerThreadPool.getInstance().shutdown();
+				logger.info(Thread.currentThread().getName()+" is the last task, consumer thread pool will be shutdown!!!");
+				ConsumerThreadPool.getInstance().shutdownNow();
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
