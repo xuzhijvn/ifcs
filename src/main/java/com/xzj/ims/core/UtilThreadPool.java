@@ -15,49 +15,51 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
  * @date 2019年4月13日
  *
  */
-public class ProducerThreadPool extends ThreadPoolExecutor implements Serializable{
+public class UtilThreadPool extends ThreadPoolExecutor implements Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final ThreadFactory NAMED_THREAD_FACTORY = new ThreadFactoryBuilder().setNameFormat("producer-pool-%d").build();
+	private static final ThreadFactory NAMED_THREAD_FACTORY = new ThreadFactoryBuilder().setNameFormat("util-pool-%d").build();
 	
-	private static volatile ProducerThreadPool INSTANCE;
+	private static volatile UtilThreadPool INSTANCE;
 
-	private ProducerThreadPool(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
+	private UtilThreadPool(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit,
 			BlockingQueue<Runnable> workQueue, ThreadFactory threadFactory, RejectedExecutionHandler handler) {
 		super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue, threadFactory, handler);
 	}
 
-	private ProducerThreadPool(int corePoolSize) {
+	private UtilThreadPool(int corePoolSize) {
 		
 		this(corePoolSize, corePoolSize, 0L, TimeUnit.MILLISECONDS,
-				new LinkedBlockingQueue<Runnable>(1), NAMED_THREAD_FACTORY, new ThreadPoolExecutor.AbortPolicy());
+				new LinkedBlockingQueue<Runnable>(30), NAMED_THREAD_FACTORY, new ThreadPoolExecutor.AbortPolicy());
 	}
 	
-	private ProducerThreadPool() throws Exception{
-		//一个生产者
+	private UtilThreadPool() throws Exception{
 		this(1);
+		if (INSTANCE != null) {
+			throw new IllegalStateException("Already instantiated");
+		}
 	}
 
-	public static ProducerThreadPool getInstance() throws Exception {
+	public static UtilThreadPool getInstance() throws Exception {
 		if(INSTANCE == null) {
-			synchronized (ProducerThreadPool.class) {
+			synchronized(UtilThreadPool.class) {
 				if(INSTANCE == null) {
-					INSTANCE = new ProducerThreadPool();
+					INSTANCE = new UtilThreadPool();
 				}
 			}
 		}
 		return INSTANCE;
 	}
-
+	
 	@SuppressWarnings("unused")
-	private ProducerThreadPool readResolve() {
+	private UtilThreadPool readResolve() {
 		return INSTANCE;
 	}
-	
+
 	public void execute(Runnable command, long delay) throws InterruptedException {
 		// TODO Auto-generated method stub
 		Thread.sleep(delay);

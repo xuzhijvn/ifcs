@@ -1,4 +1,4 @@
-package com.xzj.ims.comsumer;
+package com.xzj.ims.consumer;
 
 
 /**

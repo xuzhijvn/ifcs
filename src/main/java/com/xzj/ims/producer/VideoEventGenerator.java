@@ -8,12 +8,11 @@ import java.util.concurrent.Future;
 import org.apache.log4j.Logger;
 import org.opencv.core.Mat;
 import org.opencv.videoio.Videoio;
-
-import com.xzj.ims.core.ImsThreadPool;
 import com.xzj.ims.core.FutureExtractor;
 import com.xzj.ims.core.ProducerRecord;
 import com.xzj.ims.core.ProducerThreadPool;
 import com.xzj.ims.core.Topic;
+import com.xzj.ims.core.UtilThreadPool;
 
 /**
  * Class to convert Video Frame into byte array and generate record object event using.
@@ -42,8 +41,9 @@ public class VideoEventGenerator implements Runnable {
 		}finally {
 			try {
 				ProducerThreadPool.getInstance().shutdown();
+				UtilThreadPool.getInstance().shutdown();
+				logger.info("Thread pool of producer is be shutdown!!!");
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				logger.error(e.getMessage());
 			}
 		}
@@ -78,9 +78,9 @@ public class VideoEventGenerator implements Runnable {
 				//reconnect
 				logger.info("Reconnect camera..., cameraId "+ cameraId + " with url " + url);
 				connect.release();
-				Future<CameraConnect> future = ImsThreadPool.getInstance().submit(new CameraConnect(cameraId, url));
+				Future<CameraConnect> future = UtilThreadPool.getInstance().submit(new CameraConnect(cameraId, url));
 				//异步把连接取出来
-				ImsThreadPool.getInstance().execute(new FutureExtractor<CameraConnect>(future, connects));
+				UtilThreadPool.getInstance().execute(new FutureExtractor<CameraConnect>(future, connects));
 				continue;
 			}
 			//3, 每一秒取一帧

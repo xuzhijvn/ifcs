@@ -8,11 +8,13 @@ import org.apache.log4j.Logger;
 import org.opencv.core.Mat;
 
 import com.icbc.bas.ai.face.FileUtils;
-import com.xzj.ims.comsumer.DefalutConsumer;
-import com.xzj.ims.core.ImsThreadPool;
+import com.xzj.ims.cache.FaceDetector;
+import com.xzj.ims.consumer.DefalutConsumer;
+import com.xzj.ims.core.ConsumerThreadPool;
 import com.xzj.ims.core.ProducerThreadPool;
 import com.xzj.ims.core.FutureExtractor;
 import com.xzj.ims.core.Topic;
+import com.xzj.ims.core.UtilThreadPool;
 import com.xzj.ims.util.PropertyFileReader;
 
 /**
@@ -42,20 +44,20 @@ public class VideoStreamCollector {
 		//bulid connect asynchronous
 		final BlockingQueue<Future<CameraConnect>> futures = new LinkedBlockingQueue<Future<CameraConnect>>();
 		for (int i = 0; i < urls.length; i++) {
-			futures.offer(ImsThreadPool.getInstance().submit(new CameraConnect(ids[i].trim(), urls[i].trim())));
+			futures.offer(ConsumerThreadPool.getInstance().submit(new CameraConnect(ids[i].trim(), urls[i].trim())));
 		}
 		//initialize topic 
-		final Topic<String, Mat> topic = new Topic<String, Mat>("ai-video-topic-1",ids);
+		final Topic<String, Mat> topic = new Topic<String, Mat>("ims-topic-1",ids);
 		//extract CameraConnect from Future asynchronous
 		final BlockingQueue<CameraConnect> connects = new LinkedBlockingQueue<CameraConnect>(urls.length);
-		ImsThreadPool.getInstance().execute(new FutureExtractor<CameraConnect>(futures, connects));
+		UtilThreadPool.getInstance().execute(new FutureExtractor<CameraConnect>(futures, connects));
 		//sleep 2s, wait connects have value, one thread responsible for polling to read all connects
 		ProducerThreadPool.getInstance().execute(new VideoEventGenerator(connects, topic),1000);
 		//sleep 3s, wait partition have value
-		Thread.sleep(2000);
+		Thread.sleep(4000);
 		//one thread consumes one partition
 		for (int i = 0; i < ids.length; i++) {
-			ImsThreadPool.getInstance().execute(new DefalutConsumer(topic.get(ids[i])));
+			ConsumerThreadPool.getInstance().execute(new DefalutConsumer(topic.get(ids[i]), new FaceDetector()));
 		}
 	}
 }

@@ -33,7 +33,7 @@ public class FutureExtractor<T> implements Runnable{
 	
 	@Override
 	public void run() {
-		logger.info("Extracting Object from future...");
+		logger.info("Extracting..., object from futures / future, "+queues.size() +" connects in queues!");
 		try {
 			extract();
 		} catch (Exception e) {
@@ -43,6 +43,7 @@ public class FutureExtractor<T> implements Runnable{
 	}
 
 	private void extract() throws Exception {
+		
 		if(futures != null) {
 			//futures队列
 			while(!futures.isEmpty()) {
@@ -53,13 +54,13 @@ public class FutureExtractor<T> implements Runnable{
 					futures.put(future);
 				}
 			}
-			logger.info("Success, extract Object from Futures is done!");
+			logger.info("Success, extract object from futures is done! "+queues.size() +" connects in queues!");
 		}else {
 			//future
 			while(future != null) {
 				if(future.isDone()) {
 					queues.put(future.get());
-					logger.info("Success, extract Object from Future is done!");
+					logger.info("Success, extract object from future is done! "+queues.size() +" connects in queues!");
 					break;
 				}
 			}

@@ -1,4 +1,4 @@
-package com.xzj.ims.comsumer;
+package com.xzj.ims.consumer;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,8 +36,8 @@ public class DefalutConsumer extends AbstractConsumer<Face<String, Mat>, String,
 	private String grayDir;
 	private String frameDir;
 	
-	public DefalutConsumer(Partition<? extends Record<String, Mat>> partition) throws Exception {
-		super(partition);
+	public DefalutConsumer(Partition<? extends Record<String, Mat>> partition, FaceDetector faceDetetor) throws Exception {
+		super(partition, faceDetetor);
 		ROOT_DIR = PropertyFileReader.readPropertyFile().getProperty("save.path");
 	}
 
@@ -62,18 +62,19 @@ public class DefalutConsumer extends AbstractConsumer<Face<String, Mat>, String,
 	public void consume() throws Exception {
 		//阻塞的从消费队列里面获取数据
 		Record<String, Mat> record = partition.take();
-		logger.info("Consumeing cameraId " + record.key());
+		logger.info("Consumeing..., cameraId " + record.key());
 		Mat frame = record.value();
+		
 		//检测不到人脸，直接返回
-		List<Mat> faces = FaceDetector.getInstance().detect(frame);
+		List<Mat> faces = faceDetetor.detect(frame);
 		if(faces.size() == 0) {
 			return;
 		}
-		logger.info(faces.size()+" faces is be found");
+		logger.info(faces.size()+" faces is be found!");
 		//构造人脸对象
 		List<Face<String, Mat>> facesObj = new ArrayList<Face<String, Mat>>();
 		for (Mat face : faces) {
-			String gray = FaceDetector.getInstance().align(face);
+			String gray = faceDetetor.align(face);
 			Face<String, Mat> faceObj = new DefalutFace<String, Mat>(record.key(),frame, face, gray);
 			if(faceObj.isValid()) {
 				facesObj.add(faceObj);

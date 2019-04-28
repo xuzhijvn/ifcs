@@ -33,7 +33,7 @@ public class CameraConnect implements Callable<CameraConnect> {
 	
 	@Override
 	public CameraConnect call() throws Exception {
-		logger.info("Connecting cameraId " + cameraId + " with url " + url);
+		logger.info("Connecting..., cameraId " + cameraId + " with url " + url);
 		try {
 			return connectCamera(cameraId, url);
 		} catch (Exception e) {

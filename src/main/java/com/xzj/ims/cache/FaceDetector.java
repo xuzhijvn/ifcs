@@ -25,20 +25,15 @@ public class FaceDetector {
 	
 	private static final Logger logger = Logger.getLogger(FaceDetector.class);
 
-	private static final CascadeClassifier CASCADE_CLASSIFIER = new CascadeClassifier();
-	private static FaceDetector faceDetector;
+	private  CascadeClassifier CASCADE_CLASSIFIER = new CascadeClassifier();
 
-	private FaceDetector() {
+	public FaceDetector() {
 		// 加载人脸检测模型
 		CASCADE_CLASSIFIER.load(Constant.TMP + "bas-ai-tools\\model\\haarcascade_frontalface_alt.xml");
 	}
+	
 
-	public static FaceDetector getInstance() {
-		if (faceDetector == null) {
-			faceDetector = new FaceDetector();
-		}
-		return faceDetector;
-	}
+
 
 	public List<Mat> detect(Mat frame) {
 		List<Mat> res = new ArrayList<Mat>();
@@ -62,7 +57,7 @@ public class FaceDetector {
 		try {
 			FileUtils.forceMkdir(new File(tmpFilePath));
 		} catch (IOException e) {
-			logger.error("Create tmp file dir is fail.", e);
+			logger.error("Fail, create tmp file dir is fail.", e);
 			throw new IOException("Create tmp file dir is fail.", e);
 		}
 		String outImgFile = tmpFilePath + System.currentTimeMillis() + ".jpg";
