@@ -68,30 +68,30 @@ public class DefalutConsumer extends AbstractConsumer<Face<String, Mat>, String,
 		//检测不到人脸，直接返回
 		List<Mat> faces = faceDetetor.detect(frame);
 		if(faces.size() == 0) {
-			return;
-		}
-		logger.info(faces.size()+" faces is be found!");
-		//构造人脸对象
-		List<Face<String, Mat>> facesObj = new ArrayList<Face<String, Mat>>();
-		for (Mat face : faces) {
-			String gray = faceDetetor.align(face);
-			Face<String, Mat> faceObj = new DefalutFace<String, Mat>(record.key(),frame, face, gray);
-			if(faceObj.isValid()) {
+			logger.warn(0+" faces were detected!");
+			cache.clear();
+		}else {
+			logger.info(faces.size()+" faces were detected!");
+			//构造人脸对象
+			List<Face<String, Mat>> facesObj = new ArrayList<Face<String, Mat>>();
+			for (Mat face : faces) {
+				String gray = faceDetetor.align(face);
+				Face<String, Mat> faceObj = new DefalutFace<String, Mat>(record.key(),frame, face, gray);
 				facesObj.add(faceObj);
 			}
-		}
-		//将当前帧人脸数据加入缓存，并触发一个消费函数
-		cache.add(facesObj, t -> {
-			String facePath = faceDir + record.key() + "-T-" + record.timestamp() + "-face.png";
-			String grayPath = grayDir + record.key() + "-T-" + record.timestamp() + "-gray.png";
-			String framePath = frameDir + record.key() + "-T-" + record.timestamp() + "-frame.png";
-			
-			Imgcodecs.imwrite(facePath, t.getFace());
-			logger.warn("Success, saved face to: " + facePath);
-			Imgcodecs.imwrite(grayPath, Imgcodecs.imread(t.getGray()));
-			logger.warn("Success,saved gray to: " + grayPath);
-			Imgcodecs.imwrite(framePath, t.getFrame());
-			logger.warn("Success, saved frame to: " + framePath);
+			//将当前帧人脸数据加入缓存，并触发一个消费函数
+			cache.add(facesObj, t -> {
+				String facePath = faceDir + record.key() + "-T-" + record.timestamp() + "-face.png";
+				String grayPath = grayDir + record.key() + "-T-" + record.timestamp() + "-gray.png";
+				String framePath = frameDir + record.key() + "-T-" + record.timestamp() + "-frame.png";
+				
+				Imgcodecs.imwrite(facePath, t.getFace());
+				logger.info("Success, saved face to: " + facePath);
+				Imgcodecs.imwrite(grayPath, Imgcodecs.imread(t.getGray()));
+				logger.info("Success,saved gray to: " + grayPath);
+				Imgcodecs.imwrite(framePath, t.getFrame());
+				logger.info("Success, saved frame to: " + framePath);
 			});
+		}
 	}
 }

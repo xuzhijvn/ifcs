@@ -17,7 +17,6 @@ public abstract class Face<K,V> {
 	protected V face;
 	protected String gray;
 	protected float[] feature;
-	protected boolean isValid = false;
 	
 	public Face(K cameraId, V frame, V face, String gray) {
 		this.cameraId = cameraId;

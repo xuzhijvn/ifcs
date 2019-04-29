@@ -1,6 +1,8 @@
 package com.xzj.ims.cache;
 
 
+import org.apache.log4j.Logger;
+
 import com.icbc.bas.ai.face.FaceVertify;
 
 /**
@@ -11,6 +13,8 @@ import com.icbc.bas.ai.face.FaceVertify;
 
 public class DefalutFace<K,V> extends Face<K,V>{
 	
+	private static final Logger logger = Logger.getLogger(DefalutFace.class);
+	
 	public DefalutFace(K cameraId, V frame, V face, String gray) {
 		super(cameraId, frame, face, gray);
 		this.feature = extractFeature(gray);
@@ -19,8 +23,8 @@ public class DefalutFace<K,V> extends Face<K,V>{
 	private float[] extractFeature(String gray) {
 		float[] feature = new float[512];
 		int ret = FaceVertify.getFaceFeature(gray, feature);
-		if(ret == 1) {
-			this.isValid = true;
+		if(ret != 1) {
+			logger.warn(cameraId+": a face extraction feature value failed!");
 		}
 		return feature;
 	}

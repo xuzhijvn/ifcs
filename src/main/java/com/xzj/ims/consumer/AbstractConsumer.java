@@ -41,7 +41,10 @@ abstract public class AbstractConsumer<T extends Face<K, V>, K, V> implements Co
 			int count = 0;
 			//生产者线程关闭，消费者线程也关闭
 			while (ProducerThreadPool.getInstance().isTerminated() == false) {
+				long start = System.currentTimeMillis();
+				logger.info("Consumer starting...: "+Thread.currentThread().getName());
 				consume();
+				logger.info("Consumer finish: "+(System.currentTimeMillis() - start) + "ms was spent! ");
 				//消费完毕后要释放Mat对象，否则会内存溢出
 				if(count++ == 100) {
 					count = 0;

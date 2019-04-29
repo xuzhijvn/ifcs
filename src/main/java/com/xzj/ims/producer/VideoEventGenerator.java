@@ -42,7 +42,7 @@ public class VideoEventGenerator implements Runnable {
 			try {
 				ProducerThreadPool.getInstance().shutdown();
 				UtilThreadPool.getInstance().shutdown();
-				logger.info("Thread pool of producer is be shutdown!!!");
+				logger.info("Thread pool of producer and util is be shutdown!!!");
 			} catch (Exception e) {
 				logger.error(e.getMessage());
 			}
@@ -87,6 +87,7 @@ public class VideoEventGenerator implements Runnable {
 			int fps = (int) Math.floor(connect.getCamera().get(Videoio.CV_CAP_PROP_FPS));
 			if(connect.getPolledTimes() != fps) {
 				connect.setPolledTimes(connect.getPolledTimes() + 1);
+				logger.info(connect.getCameraId() +": The connect was taken out for the "+connect.getPolledTimes()+"rd time, fps = "+fps);
 				connects.offer(connect);
 				continue;
 			}

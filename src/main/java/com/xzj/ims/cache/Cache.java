@@ -31,4 +31,8 @@ public class Cache<T extends Face<?, ?>> {
 		}
 		this.cache = tmp;
 	}
+	
+	public void clear() {
+		cache.clear();
+	}
 }
