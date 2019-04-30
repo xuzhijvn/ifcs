@@ -46,7 +46,7 @@ abstract public class AbstractConsumer<T extends Face<K, V>, K, V> implements Co
 				consume();
 				logger.info("Consumer finish: "+(System.currentTimeMillis() - start) + "ms was spent! ");
 				//消费完毕后要释放Mat对象，否则会内存溢出
-				if(count++ == 100) {
+				if(count++ == 15) {
 					count = 0;
 					System.gc();
 				}

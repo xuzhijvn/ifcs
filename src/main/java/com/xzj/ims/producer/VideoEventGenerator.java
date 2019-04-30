@@ -55,7 +55,7 @@ public class VideoEventGenerator implements Runnable {
 	 */
 	private void generateEvent() throws Exception {
 
-		while (connects.isEmpty() == false) {
+		while (connects.isEmpty() == false || UtilThreadPool.getInstance().getTaskCount() > 0) {
 			//1, 从连接队列非阻塞的取连接
 			CameraConnect connect = connects.poll();
 			if(connect == null) {
@@ -70,7 +70,7 @@ public class VideoEventGenerator implements Runnable {
 			if(flag == false ) {
 				double frameCount = connect.getCamera().get(Videoio.CAP_PROP_FRAME_COUNT);
 				if(frameCount > 0) {
-					logger.info("视频总帧数： "+frameCount);
+					logger.info(cameraId+": total frmae count =  "+frameCount);
 					logger.info("Finished, read frame from cameraId " + cameraId + " with url " + url);
 					continue;
 				}
@@ -87,7 +87,7 @@ public class VideoEventGenerator implements Runnable {
 			int fps = (int) Math.floor(connect.getCamera().get(Videoio.CV_CAP_PROP_FPS));
 			if(connect.getPolledTimes() != fps) {
 				connect.setPolledTimes(connect.getPolledTimes() + 1);
-				logger.info(connect.getCameraId() +": The connect was taken out for the "+connect.getPolledTimes()+"rd time, fps = "+fps);
+				logger.info(cameraId +": The connect was taken out for the "+connect.getPolledTimes()+"rd time, fps = "+fps);
 				connects.offer(connect);
 				continue;
 			}
@@ -106,7 +106,9 @@ public class VideoEventGenerator implements Runnable {
 				boolean stage = topic.get(cameraId).offer(record);
 				//插入失败说明消费者队列现在无法消费，可能是消费者消费能力不够
 				if(stage == true) {
-					logger.info("Generated events for cameraId = " + cameraId + " timestamp = " + timestamp);
+					logger.info("Generated a event for cameraId = " + cameraId + " timestamp = " + timestamp);
+				}else {
+					logger.warn(cameraId+": a event is dropped, consumer is busy...");
 				}
 			}
 			connects.offer(connect);

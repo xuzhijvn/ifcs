@@ -58,7 +58,7 @@ public class FaceDetector {
 			FileUtils.forceMkdir(new File(tmpFilePath));
 		} catch (IOException e) {
 			logger.error("Fail, create tmp file dir is fail.", e);
-			throw new IOException("Create tmp file dir is fail.", e);
+			throw new IOException("Fail, create tmp file dir is fail.", e);
 		}
 		String outImgFile = tmpFilePath + System.currentTimeMillis() + ".jpg";
 		FaceVertify.align(face, 0, face.cols(), 0, face.rows(), outImgFile);
