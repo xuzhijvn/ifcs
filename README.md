@@ -1,7 +1,7 @@
 # ims
  Intelligent Monitoring System（智能监控系统）
  
-# 背景
+## 背景
 
 1. 智能摄像头（抓拍机）将人脸检测功能集成到网络摄像头内部，价格昂贵，智能检测功能与硬件高度集成，不利于后续功能扩展。
 
@@ -9,7 +9,7 @@
 
 ![](https://github.com/xuzhijvn/ims/blob/master/images/background.png)
 
-# 目标
+## 目标
 
 1. 构建一种更通用的AI+视频监控的解决方案
 
@@ -21,7 +21,7 @@
 以上述假定的价格举例计算，当摄像头数量大于2个时，基于IMS的解决方案价格优势开始体现。（200 * 3 + 4800 < 2000 * 3）
 
 
-# 架构设计（单节点版）
+## 架构设计（单节点版）
 
 在只有数十个摄像头的场景（个人认为30个以下），应用单节点方案就能解决问题。在摄像头更多的场景，应用集群模式是一种更好的解决方案。
 
@@ -36,7 +36,7 @@
 过多的线程会造成消费者处理时间延长，并不适合本系统涉及的场景。因此，现在主要的目标就是找到一个合适的N。
 
 
-# 架构设计（集群版）
+## 架构设计（集群版）
 
 
 [![](https://res.infoq.com/articles/video-stream-analytics-opencv/en/resources/figure1.png)](https://www.infoq.com/articles/video-stream-analytics-opencv "实时视频流处理架构设计")
@@ -46,7 +46,7 @@
 + [中文参考链接](https://infoq.cn/article/video-stream-analytics-opencv)
 
 
-# 去重模块原理
+## 去重模块原理
 
 由于，检测对象可能长时间处在视频监控范围之内，因此，该时间段的视频帧充斥着大量重复检测对象。对所有重复对象都去做后续的1：N人脸识别显然不合理，因此需要合理的去重设计。
 
@@ -68,7 +68,7 @@
 ![](https://github.com/xuzhijvn/ims/blob/master/images/deduplicate-4.png)
 > 图为：去重原理-4
 
-# 性能测试（单节点版）
+## 性能测试（单节点版）
 
 实验结果表明，一个消费者（线程）任务耗时300ms、CPU占用率达到80%，随着消费者数目增多，任务耗时延长，CPU占用率进一步增高；当消费者（线程）任务达到8个时，平均任务完成耗时为2000ms，CPU占用率高达95%以上。（英特尔 Core i7-8550U @ 1.80GHz 四核 ，核心数: 4 / 线程数: 8）
 
@@ -80,7 +80,7 @@
 
 
     
-# 环境配置
+## 环境配置
 + linux
     + [Zookeeper配置](https://github.com)
     + [Kafka配置](https://github.com)
@@ -92,7 +92,7 @@
       * [下载Haddop](http://hadoop.apache.org/releases.html)
       * 修改hadoop-x.x.x/etc/hadoop/hadoop-env.cmd中的JAVA_HOME (路径不能空格)
      
-# 展望
+## 展望
 
 增加GPU图像处理单元，提升图像处理效率，以便单个IMS节点能负载更多的摄像机。
 
