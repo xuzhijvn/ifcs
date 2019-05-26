@@ -78,6 +78,7 @@
 
 ![](https://github.com/xuzhijvn/ims/blob/master/images/performance-2.png)
 
+
     
 # 环境配置
 + linux
@@ -90,3 +91,8 @@
     + Hadoop配置：
       * [下载Haddop](http://hadoop.apache.org/releases.html)
       * 修改hadoop-x.x.x/etc/hadoop/hadoop-env.cmd中的JAVA_HOME (路径不能空格)
+     
+# 展望
+
+增加GPU图像处理单元，提升图像处理效率，以便单个IMS节点能负载更多的摄像机。
+
