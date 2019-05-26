@@ -1,5 +1,13 @@
 # ims
  Intelligent Monitoring System（智能监控系统）
+ 
+# 背景
+
+1. 智能摄像头（抓拍机）将人脸检测功能集成到网络摄像头内部，价格昂贵，智能检测功能与硬件高度集成，不利于后续功能扩展。
+
+2. 充分利用现有资源，给普通网络摄像头赋能
+
+![](https://github.com/qq783175223/rt-fr/blob/master/images/background.png)
 
 # 原理
 #### 1、实时视频流处理模块
