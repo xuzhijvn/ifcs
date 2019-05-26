@@ -7,7 +7,7 @@
 
 2. 大量已有普通网络摄头没有被充分利用
 
-![](https://github.com/qq783175223/rt-fr/blob/master/images/background.png)
+![](https://github.com/qq783175223/ims/blob/master/images/background.png)
 
 # 目标
 
@@ -15,7 +15,7 @@
 
 2. 充分利用现有资源，给普通网络摄像头赋能
 
-![](https://github.com/qq783175223/rt-fr/blob/master/images/aims.png)
+![](https://github.com/qq783175223/ims/blob/master/images/aims.png)
 
 基于IMS（Intelligent Monitoring System）实时视频流处理解决方案，具有价格低廉、功能可控的优点。
 以上述假定的价格举例计算，当摄像头数量大于2个时，基于IMS的解决方案价格优势开始体现。（200 * 3 + 4800 < 2000 * 3）
@@ -32,7 +32,7 @@
 
 3.  每个分片都有一个线程（消费者）去消费该分片里面的数据。
 
-![](https://github.com/qq783175223/rt-fr/blob/master/images/thread-model.png)
+![](https://github.com/qq783175223/ims/blob/master/images/thread-model.png)
 
 过多的线程会造成消费者处理时间延长，并不适合本系统涉及的场景。因此，现在主要的目标就是找到一个合适的N。
 
@@ -53,7 +53,7 @@
 
 由于，检测对象可能长时间处在视频监控范围之内，因此，该时间段的视频帧充斥着大量重复检测对象。对所有重复对象都去做后续的1：N人脸识别显然不合理，因此需要合理的去重设计。
 
-![](https://github.com/qq783175223/rt-fr/blob/master/images/deduplicate.png)
+![](https://github.com/qq783175223/ims/blob/master/images/deduplicate.png)
 > 图为：去重原理
 
 “时刻1”处理的视频帧包含人脸A B C D，而缓存中没有人脸数据，当前视频帧与缓存的交集等于A B C D，将交集送往后续1：N人脸识别，同时将人脸A B C D缓存；同理，“时刻2”处理的视频帧包含人脸A B C E，人脸A B C E与缓存人脸A B C D的交集等于E，将交集送往后续1：N人脸识别，同时将人脸A B C E缓存。
