@@ -23,8 +23,7 @@
 
 # 架构设计(单节点版)
 
-在只有数十个摄像头的场景（个人认为30个以下），应用单节点方案就能解决问题。在摄像头更多的场景，应用集群模式是一种更好的解决方案。本小节只介绍单节点版本，集群版本下一节介绍。
-
+在只有数十个摄像头的场景（个人认为30个以下），应用单节点方案就能解决问题。在摄像头更多的场景，应用集群模式是一种更好的解决方案。
 
 1. 一个线程（生产者）轮询所有的监控摄像头，以固定的频率读取摄像头的实时数据；
 
@@ -38,9 +37,7 @@
 
 
 # 架构设计(集群版)
-#### 1、实时视频流处理模块
-                
-+ 架构设计
+
 
 [![](https://res.infoq.com/articles/video-stream-analytics-opencv/en/resources/figure1.png)](https://www.infoq.com/articles/video-stream-analytics-opencv "实时视频流处理架构设计")
 > 图为：实时视频流处理架构
@@ -49,14 +46,29 @@
 + [中文参考链接](https://infoq.cn/article/video-stream-analytics-opencv)
 
 
-#### 2、去重模块
+# 去重模块原理
 
 由于，检测对象可能长时间处在视频监控范围之内，因此，该时间段的视频帧充斥着大量重复检测对象。对所有重复对象都去做后续的1：N人脸识别显然不合理，因此需要合理的去重设计。
 
-![](https://github.com/xuzhijvn/ims/blob/master/images/deduplicate.png)
-> 图为：去重原理
+1. 从新的一帧照片中检测出所有的人脸
 
-“时刻1”处理的视频帧包含人脸A B C D，而缓存中没有人脸数据，当前视频帧与缓存的交集等于A B C D，将交集送往后续1：N人脸识别，同时将人脸A B C D缓存；同理，“时刻2”处理的视频帧包含人脸A B C E，人脸A B C E与缓存人脸A B C D的交集等于E，将交集送往后续1：N人脸识别，同时将人脸A B C E缓存。
+2. 将第一步的人脸逐一和缓存中的人脸比对，缓存中没有的人脸则保存下来发往下一步业务逻辑
+
+3. 用第一步得到的人脸替换缓存中的人脸
+
+![](https://github.com/xuzhijvn/ims/blob/master/images/deduplicate-1.png)
+> 图为：去重原理-1
+
+![](https://github.com/xuzhijvn/ims/blob/master/images/deduplicate-2.png)
+> 图为：去重原理-2
+
+![](https://github.com/xuzhijvn/ims/blob/master/images/deduplicate-3.png)
+> 图为：去重原理-3
+
+![](https://github.com/xuzhijvn/ims/blob/master/images/deduplicate-4.png)
+> 图为：去重原理-4
+
+
 
 #### 3、人脸识别模块
 + 系统架构
