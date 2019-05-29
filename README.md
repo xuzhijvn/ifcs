@@ -1,5 +1,5 @@
 # ims
- Intelligent Monitoring System（智能监控系统）
+ Intelligent Monitoring System（智能监控系统），本方案是基于CPU实现的，如需更好的性能，需要参考本方案思想改造成GPU的版本。
  
 ## 1. 背景
 
@@ -21,9 +21,17 @@
 以上述假定的价格举例计算，当摄像头数量大于2个时，基于IMS的解决方案价格优势开始体现。（200 * 3 + 4800 < 2000 * 3）
 
 
-## 3. 架构设计（单节点版）
+## 3. 建设方案（单节点版）
 
 在只有数十个摄像头的场景（个人认为30个以下），应用单节点方案就能解决问题。在摄像头更多的场景，应用集群模式是一种更好的解决方案。
+
+* 架构设计
+
+![](https://github.com/xuzhijvn/ims/blob/master/images/architecture.png)
+
+* 线程模式
+
+![](https://github.com/xuzhijvn/ims/blob/master/images/thread-model.png)
 
 1. 一个线程（生产者）轮询所有的监控摄像头，以固定的频率读取摄像头的实时数据；
 
@@ -31,12 +39,11 @@
 
 3.  每个分片都有一个线程（消费者）去消费该分片里面的数据。
 
-![](https://github.com/xuzhijvn/ims/blob/master/images/thread-model.png)
 
 过多的线程会造成消费者处理时间延长，并不适合本系统涉及的场景。因此，现在主要的目标就是找到一个合适的N。
 
 
-## 4. 架构设计（集群版）
+## 4. 建设方案（集群版）
 
 
 [![](https://res.infoq.com/articles/video-stream-analytics-opencv/en/resources/figure1.png)](https://www.infoq.com/articles/video-stream-analytics-opencv "实时视频流处理架构设计")
