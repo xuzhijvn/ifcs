@@ -1,13 +1,13 @@
-# ifcs
+# IFCS
  Intelligent Face Capture System（智能人脸抓拍系统），本方案是基于CPU实现的，如需更好的性能，需要参考本方案思想改造成GPU的版本。
  
 ## 1. 背景
 
-1. 智能摄像头（抓拍机）将人脸检测功能集成到网络摄像头内部，价格昂贵，智能检测功能与硬件高度集成，不利于后续功能扩展。
+A. 智能摄像头（抓拍机）将人脸检测功能集成到网络摄像头内部，价格昂贵，智能检测功能与硬件高度集成，不利于后续功能扩展。
 
-2. 大量已有普通网络摄头没有被充分利用
+B. 大量已有普通网络摄头没有被充分利用
 
-![](https://github.com/xuzhijvn/ims/blob/master/images/background.png)
+![](https://github.com/xuzhijvn/ifcs/blob/master/images/background.png)
 
 ## 2. 目标
 
@@ -15,7 +15,7 @@ A. 构建一种更通用的AI+视频监控的解决方案
 
 B. 充分利用现有资源，给普通网络摄像头赋能
 
-![](https://github.com/xuzhijvn/ims/blob/master/images/aims.png)
+![](https://github.com/xuzhijvn/ifcs/blob/master/images/aims.png)
 
 IFCS并不是现有抓拍机的简单替代方案，IFCS和抓拍机各有适合其自身的应用场景，两种方案互为补充，力争为不同的场景给出最合适的解决方案。
 
@@ -28,11 +28,11 @@ IFCS并不是现有抓拍机的简单替代方案，IFCS和抓拍机各有适合
 
 * 架构设计
 
-![](https://github.com/xuzhijvn/ims/blob/master/images/architecture.png)
+![](https://github.com/xuzhijvn/ifcs/blob/master/images/architecture.png)
 
 * 线程模式
 
-![](https://github.com/xuzhijvn/ims/blob/master/images/thread-model.png)
+![](https://github.com/xuzhijvn/ifcs/blob/master/images/thread-model.png)
 
 
 A. 一个线程（生产者）轮询所有的监控摄像头，以固定的频率读取摄像头的实时数据；
@@ -68,27 +68,27 @@ B. 将第一步的人脸逐一和缓存中的人脸比对，缓存中没有的�
 
 C. 用第一步得到的人脸替换缓存中的人脸
 
-![](https://github.com/xuzhijvn/ims/blob/master/images/deduplicate-1.png)
+![](https://github.com/xuzhijvn/ifcs/blob/master/images/deduplicate-1.png)
 > 图5.1：去重原理-1
 
-![](https://github.com/xuzhijvn/ims/blob/master/images/deduplicate-2.png)
+![](https://github.com/xuzhijvn/ifcs/blob/master/images/deduplicate-2.png)
 > 图5.2：去重原理-2
 
-![](https://github.com/xuzhijvn/ims/blob/master/images/deduplicate-3.png)
+![](https://github.com/xuzhijvn/ifcs/blob/master/images/deduplicate-3.png)
 > 图5.3：去重原理-3
 
-![](https://github.com/xuzhijvn/ims/blob/master/images/deduplicate-4.png)
+![](https://github.com/xuzhijvn/ifcs/blob/master/images/deduplicate-4.png)
 > 图5.4：去重原理-4
 
 ## 6. 性能测试（单节点版）
 
 实验结果表明，一个消费者（线程）任务耗时300ms、CPU占用率达到80%，随着消费者数目增多，任务耗时延长，CPU占用率进一步增高；当消费者（线程）任务达到8个时，平均任务完成耗时为2000ms，CPU占用率高达95%以上。（英特尔 Core i7-8550U @ 1.80GHz 四核 ，核心数: 4 / 线程数: 8）
 
-![](https://github.com/xuzhijvn/ims/blob/master/images/performance-1.png)
+![](https://github.com/xuzhijvn/ifcs/blob/master/images/performance-1.png)
 
-抓拍机以海康威视的产品举例，其价格在2000元左右，IMS节点服务器为一台价格4800元的个人电脑，普通网络摄像头在200元左右。从数据中可以得知，当监控数量等于3时，本方案能节省10%的成本，并且响应时间和抓拍机基本一致；当监控数量等于6时，本方案能节省50%的成本，并且最长响应时间不足2秒；随着监控点数量越多，节省的成本越多，相应的响应时间越长。
+抓拍机以海康威视的产品举例，其价格在2000元左右，IFCS节点服务器为一台价格4800元的个人电脑，普通网络摄像头在200元左右。从数据中可以得知，当监控数量等于3时，本方案能节省10%的成本，并且响应时间和抓拍机基本一致；当监控数量等于6时，本方案能节省50%的成本，并且最长响应时间不足2秒；随着监控点数量越多，节省的成本越多，相应的响应时间越长。
 
-![](https://github.com/xuzhijvn/ims/blob/master/images/performance-2.png)
+![](https://github.com/xuzhijvn/ifcs/blob/master/images/performance-2.png)
 
 
     
@@ -106,5 +106,5 @@ C. 用第一步得到的人脸替换缓存中的人脸
      
 ## 8. 展望
 
-增加GPU图像处理单元，提升图像处理效率，以便单个IMS节点能负载更多的摄像机。
+增加GPU图像处理单元，提升图像处理效率，以便单个IFCS节点能负载更多的摄像机。
 
