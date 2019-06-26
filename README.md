@@ -1,5 +1,5 @@
-# ims
- Intelligent Monitoring System（智能监控系统），本方案是基于CPU实现的，如需更好的性能，需要参考本方案思想改造成GPU的版本。
+# ifcs
+ Intelligent Face Capture System（智能人脸抓拍系统），本方案是基于CPU实现的，如需更好的性能，需要参考本方案思想改造成GPU的版本。
  
 ## 1. 背景
 
@@ -17,8 +17,9 @@
 
 ![](https://github.com/xuzhijvn/ims/blob/master/images/aims.png)
 
-基于IMS（Intelligent Monitoring System）实时视频流处理解决方案，具有价格低廉、功能可控的优点。
-以上述假定的价格举例计算，当摄像头数量大于2个时，基于IMS的解决方案价格优势开始体现。（200 * 3 + 4800 < 2000 * 3）
+IFCS并不是现有抓拍机的简单替代方案，IFCS和抓拍机各有适合其自身的应用场景，两种方案互为补充，力争为不同的场景给出最合适的解决方案。
+
+另外，IFCS的设计思想并不是一个新奇事物，多个厂商早已将类似的功能制成专业设备，例如：带有人脸检测功能的NVR，大华集团的IVSS一体机。这些专业设备全都集成了数量不等的GPU单元，GPU性能差异，决定了专业设备的负载能力。IFCS原型是基于CPU开发，旨在验证方案的可行性。
 
 
 ## 3. 建设方案（单节点版）
